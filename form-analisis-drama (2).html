@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analisis Struktur Drama – Tugas Siswa</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1a1008; --card: #221608; --gold: #c9952a; --gold-light: #e8b84b;
+    --gold-pale: #f5e6c0; --red-curtain: #6b1a1a; --red-dark: #3d0e0e;
+    --text: #f0e6ce; --text-muted: #b8a882; --border: rgba(201,149,42,0.3);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); font-family: 'Lora', serif; color: var(--text); min-height: 100vh;
+    background-image: radial-gradient(ellipse at 50% 0%, rgba(107,26,26,0.4) 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(201,149,42,0.02) 40px, rgba(201,149,42,0.02) 41px);
+  }
+  .stage-header { position: relative; background: var(--red-curtain); overflow: hidden; min-height: 220px; display: flex; align-items: center; justify-content: center; }
+  .curtain-left { position: absolute; top:0; bottom:0; left:0; width:35%; background: linear-gradient(100deg,#8b2020 0%,#6b1a1a 60%,rgba(107,26,26,0.3) 100%); box-shadow: inset -20px 0 40px rgba(0,0,0,0.5); }
+  .curtain-right { position: absolute; top:0; bottom:0; right:0; width:35%; background: linear-gradient(260deg,#8b2020 0%,#6b1a1a 60%,rgba(107,26,26,0.3) 100%); box-shadow: inset 20px 0 40px rgba(0,0,0,0.5); }
+  .valance { position:absolute; top:0; left:0; right:0; height:30px; background: linear-gradient(to bottom,#a07820,#c9952a); z-index:5; }
+  .valance::before { content:''; position:absolute; bottom:-8px; left:0; right:0; height:16px; background: radial-gradient(ellipse 20px 8px at 10px 8px,#a07820 50%,transparent 51%) repeat-x; background-size:20px 16px; }
+  .header-center { position:relative; z-index:4; text-align:center; padding:40px 20px 30px; }
+  .stage-icon { font-size:2.5rem; margin-bottom:8px; display:block; animation: glow 3s ease-in-out infinite; }
+  @keyframes glow { 0%,100%{filter:drop-shadow(0 0 8px rgba(201,149,42,0.6))} 50%{filter:drop-shadow(0 0 20px rgba(232,184,75,1))} }
+  .header-center h1 { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,4vw,2.2rem); font-weight:700; color:var(--gold-pale); text-shadow:0 2px 12px rgba(0,0,0,0.8); letter-spacing:0.03em; }
+  .header-center .subtitle { font-size:0.9rem; color:var(--gold-light); margin-top:6px; font-style:italic; }
+  .gold-line { width:80px; height:2px; background:linear-gradient(to right,transparent,var(--gold),transparent); margin:12px auto; }
+  .info-strip { background:rgba(201,149,42,0.08); border-bottom:1px solid var(--border); padding:16px 20px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center; font-size:0.82rem; color:var(--text-muted); }
+  .info-strip span { display:flex; align-items:center; gap:6px; }
+  .info-strip .dot { color:var(--gold); }
+  .container { max-width:720px; margin:0 auto; padding:32px 16px 60px; }
+  .intro-card { background:linear-gradient(135deg,var(--red-dark),rgba(107,26,26,0.5)); border:1px solid rgba(201,149,42,0.4); border-radius:4px; padding:24px 28px; margin-bottom:28px; position:relative; overflow:hidden; }
+  .intro-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:linear-gradient(to bottom,var(--gold),var(--gold-light)); }
+  .intro-card h2 { font-family:'Playfair Display',serif; font-size:1rem; color:var(--gold-light); margin-bottom:8px; }
+  .intro-card p { font-size:0.88rem; color:var(--text-muted); line-height:1.7; }
+  .struktur-map { background:rgba(201,149,42,0.04); border:1px solid var(--border); border-radius:4px; padding:18px 22px; margin-bottom:28px; }
+  .struktur-map h3 { font-family:'Playfair Display',serif; font-size:0.95rem; color:var(--gold); margin-bottom:14px; }
+  .tree { display:flex; flex-direction:column; gap:7px; font-size:0.82rem; color:var(--text-muted); }
+  .tree-root { color:var(--gold-light); font-weight:600; display:flex; align-items:center; gap:8px; }
+  .tree-child { padding-left:24px; display:flex; align-items:center; gap:8px; }
+  .tree-subchild { padding-left:52px; display:flex; align-items:center; gap:8px; }
+  .tree-line { color:var(--gold); opacity:0.5; }
+  .badge { display:inline-block; padding:2px 10px; border-radius:20px; font-size:0.72rem; font-style:italic; }
+  .badge-prolog { background:rgba(107,26,26,0.5); color:#f0b0b0; border:1px solid rgba(200,100,100,0.4); }
+  .badge-dialog { background:rgba(30,70,160,0.25); color:#b0cef0; border:1px solid rgba(100,150,220,0.4); }
+  .badge-epilog { background:rgba(20,120,70,0.25); color:#a0e8c0; border:1px solid rgba(80,180,120,0.4); }
+  .form-section { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:28px; margin-bottom:20px; transition:border-color 0.3s; animation:fadeUp 0.5s ease both; }
+  .form-section:hover { border-color:rgba(201,149,42,0.55); }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+  .section-top { display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+  .section-label { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--gold-light); }
+  .section-num { width:28px; height:28px; background:linear-gradient(135deg,var(--gold),#a07820); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.78rem; font-family:'Lora',serif; color:#1a1008; font-weight:600; flex-shrink:0; }
+  .struktur-pill { padding:3px 12px; border-radius:20px; font-size:0.7rem; font-style:italic; }
+  .pill-prolog { background:rgba(107,26,26,0.6); color:#f0b0b0; border:1px solid rgba(200,100,100,0.4); }
+  .pill-dialog { background:rgba(30,70,160,0.3); color:#b0cef0; border:1px solid rgba(100,150,220,0.4); }
+  .pill-epilog { background:rgba(20,120,70,0.3); color:#a0e8c0; border:1px solid rgba(80,180,120,0.4); }
+  .section-desc { font-size:0.8rem; color:var(--text-muted); margin-bottom:22px; font-style:italic; padding-left:38px; line-height:1.5; }
+  .question { margin-bottom:24px; }
+  .question:last-child { margin-bottom:0; }
+  label.q-label { display:block; font-size:0.92rem; color:var(--text); margin-bottom:10px; line-height:1.5; }
+  label.q-label .required { color:#e05555; margin-left:3px; }
+  label.q-label .hint { display:block; font-size:0.78rem; color:var(--text-muted); font-style:italic; margin-top:3px; }
+  input[type="text"],textarea,select { width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(201,149,42,0.25); border-radius:3px; color:var(--text); font-family:'Lora',serif; font-size:0.88rem; padding:11px 14px; outline:none; transition:border-color 0.25s,background 0.25s; }
+  input[type="text"]:focus,textarea:focus,select:focus { border-color:var(--gold); background:rgba(201,149,42,0.06); }
+  textarea { resize:vertical; min-height:90px; line-height:1.6; }
+  select option { background:#221608; }
+  ::placeholder { color:rgba(184,168,130,0.4); }
+  .option-group { display:flex; flex-direction:column; gap:10px; }
+  .option-item { display:flex; align-items:flex-start; gap:11px; cursor:pointer; padding:10px 14px; border-radius:3px; border:1px solid transparent; transition:background 0.2s,border-color 0.2s; }
+  .option-item:hover { background:rgba(201,149,42,0.07); border-color:var(--border); }
+  .option-item input[type="radio"],.option-item input[type="checkbox"] { width:auto; background:none; border:none; padding:0; accent-color:var(--gold); margin-top:2px; flex-shrink:0; transform:scale(1.2); }
+  .option-item span { font-size:0.88rem; color:var(--text); line-height:1.5; }
+  .scale-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .scale-btn { flex:1; min-width:40px; padding:10px 4px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:3px; color:var(--text-muted); font-family:'Lora',serif; font-size:0.85rem; cursor:pointer; text-align:center; transition:all 0.2s; }
+  .scale-btn:hover,.scale-btn.active { background:rgba(201,149,42,0.15); border-color:var(--gold); color:var(--gold-light); }
+  .scale-labels { display:flex; justify-content:space-between; font-size:0.73rem; color:var(--text-muted); margin-top:6px; font-style:italic; }
+  .section-divider { height:1px; background:linear-gradient(to right,transparent,var(--border),transparent); margin:8px 0 22px; }
+  .submit-area { text-align:center; padding:32px 0 0; }
+  .submit-btn { background:linear-gradient(135deg,#a07820,var(--gold),#c9952a); color:#1a1008; font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; padding:14px 48px; border:none; border-radius:3px; cursor:pointer; letter-spacing:0.08em; transition:transform 0.2s,box-shadow 0.2s; box-shadow:0 4px 20px rgba(201,149,42,0.3); }
+  .submit-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(201,149,42,0.5); }
+  .submit-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+  .submit-note { font-size:0.78rem; color:var(--text-muted); margin-top:14px; font-style:italic; }
+  .status-msg { display:none; margin-top:16px; padding:14px 18px; border-radius:3px; font-size:0.88rem; text-align:center; }
+  .status-msg.show { display:block; animation:fadeUp 0.3s ease; }
+  .status-success { background:rgba(40,140,70,0.2); border:1px solid rgba(80,180,120,0.4); color:#a0e8c0; }
+  .status-error { background:rgba(180,40,40,0.2); border:1px solid rgba(200,80,80,0.4); color:#f0a0a0; }
+  .status-loading { background:rgba(201,149,42,0.1); border:1px solid var(--border); color:var(--gold-light); }
+  .success-overlay { display:none; position:fixed; inset:0; background:rgba(10,6,2,0.92); z-index:100; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:20px; }
+  .success-overlay.show { display:flex; animation:fadeIn 0.4s ease; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .success-box { background:var(--card); border:1px solid var(--gold); border-radius:6px; padding:48px 40px; max-width:480px; }
+  .success-box .check { font-size:3rem; margin-bottom:16px; }
+  .success-box h2 { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--gold-light); margin-bottom:10px; }
+  .success-box p { font-size:0.9rem; color:var(--text-muted); line-height:1.6; }
+  .reset-btn { margin-top:24px; background:transparent; border:1px solid var(--border); color:var(--text-muted); font-family:'Lora',serif; font-size:0.85rem; padding:10px 28px; border-radius:3px; cursor:pointer; transition:border-color 0.2s,color 0.2s; }
+  .reset-btn:hover { border-color:var(--gold); color:var(--gold-light); }
+  .form-footer { text-align:center; padding:24px 0; font-size:0.75rem; color:rgba(184,168,130,0.35); letter-spacing:0.04em; }
+  .error-field { border-color:#e05555 !important; }
+  /* Sub-bagian dalam Dialog */
+  .sub-header { display:flex; align-items:center; gap:10px; margin:0 0 18px; }
+  .sub-icon { width:24px; height:24px; border-radius:50%; background:rgba(100,150,220,0.25); border:1px solid rgba(100,150,220,0.5); color:#b0cef0; font-size:0.75rem; font-weight:600; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .sub-title { font-family:'Playfair Display',serif; font-size:1rem; color:#b0cef0; }
+  .sub-desc { font-size:0.75rem; color:var(--text-muted); font-style:italic; }
+  .sub-divider { height:1px; background:linear-gradient(to right, transparent, rgba(100,150,220,0.2), transparent); margin:24px 0; }
+</style>
+</head>
+<body>
+
+<div class="stage-header">
+  <div class="valance"></div>
+  <div class="curtain-left"></div>
+  <div class="curtain-right"></div>
+  <div class="header-center">
+    <span class="stage-icon">🎭</span>
+    <h1>Analisis Struktur Drama</h1>
+    <div class="gold-line"></div>
+    <p class="subtitle">Lembar Kerja Siswa — Tugas Apresiasi Drama</p>
+  </div>
+</div>
+
+<div class="info-strip">
+  <span><span class="dot">📋</span> Mata Pelajaran: Bahasa Indonesia</span>
+  <span><span class="dot">⏱</span> Estimasi waktu: 30–45 menit</span>
+  <span><span class="dot">🔒</span> Wajib isi semua pertanyaan bertanda *</span>
+</div>
+
+<div class="container">
+
+  <div class="intro-card">
+    <h2>📌 Petunjuk Pengerjaan</h2>
+    <p>Setelah menonton video drama yang telah disiapkan guru, jawablah setiap pertanyaan berdasarkan pemahamanmu. Ikuti urutan struktur drama: <strong style="color:var(--gold-light)">Prolog → Dialog (Orientasi → Komplikasi → Resolusi) → Epilog.</strong></p>
+  </div>
+
+  <div class="struktur-map">
+    <h3>🗺️ Peta Struktur Drama</h3>
+    <div class="tree">
+      <div class="tree-root">🎭 <span>Struktur Drama</span></div>
+      <div class="tree-child"><span class="tree-line">├─</span> <span class="badge badge-prolog">Prolog</span> <span>Pembukaan / pengantar cerita</span></div>
+      <div class="tree-child"><span class="tree-line">├─</span> <span class="badge badge-dialog">Dialog</span> <span>Bagian utama percakapan &amp; peristiwa</span></div>
+      <div class="tree-subchild"><span class="tree-line">├─</span> <span style="color:#a0c4e8">1. Orientasi</span> <span>Pengenalan tokoh, latar, dan situasi awal</span></div>
+      <div class="tree-subchild"><span class="tree-line">├─</span> <span style="color:#a0c4e8">2. Komplikasi</span> <span>Munculnya konflik hingga klimaks</span></div>
+      <div class="tree-subchild"><span class="tree-line">└─</span> <span style="color:#a0c4e8">3. Resolusi</span> <span>Penyelesaian konflik &amp; akhir cerita</span></div>
+      <div class="tree-child"><span class="tree-line">└─</span> <span class="badge badge-epilog">Epilog</span> <span>Penutup / rangkuman / pesan moral</span></div>
+    </div>
+  </div>
+
+  <form id="dramaForm" novalidate>
+
+    <!-- A: IDENTITAS -->
+    <div class="form-section">
+      <div class="section-top"><span class="section-num">A</span><span class="section-label">Identitas Siswa</span></div>
+      <p class="section-desc">Data diri kamu sebagai pengisi lembar kerja ini.</p>
+      <div class="question">
+        <label class="q-label" for="nama">Nama Lengkap <span class="required">*</span></label>
+        <input type="text" id="nama" name="nama" placeholder="Tuliskan nama lengkapmu" required>
+      </div>
+      <div class="question">
+        <label class="q-label" for="kelas">Kelas <span class="required">*</span></label>
+        <select id="kelas" name="kelas" required>
+          <option value="" disabled selected>-- Pilih kelas --</option>
+          <option>X-1</option><option>X-2</option><option>X-3</option>
+          <option>XI-1</option><option>XI-2</option><option>XI-3</option>
+          <option>XII-1</option><option>XII-2</option><option>XII-3</option>
+        </select>
+      </div>
+      <div class="question">
+        <label class="q-label" for="judul">Judul Drama yang Dianalisis <span class="required">*</span></label>
+        <input type="text" id="judul" name="judul" placeholder="Sesuai judul video yang ditonton" required>
+      </div>
+    </div>
+
+    <!-- B: PROLOG -->
+    <div class="form-section">
+      <div class="section-top"><span class="section-num">B</span><span class="section-label">Prolog</span><span class="struktur-pill pill-prolog">Bagian Pembuka</span></div>
+      <p class="section-desc">Bagian awal sebelum dialog dimulai — berupa narasi, pengantar, atau gambaran situasi awal.</p>
+      <div class="question">
+        <label class="q-label" for="prolog_isi">1. Bagaimana prolog/pembukaan drama ini? <span class="required">*</span>
+          <span class="hint">Apa yang terjadi di awal sebelum dialog antartokoh dimulai?</span>
+        </label>
+        <textarea id="prolog_isi" name="prolog_isi" placeholder="Deskripsikan bagian pembuka drama..." required></textarea>
+      </div>
+      <div class="question">
+        <label class="q-label" for="prolog_latar">2. Apa latar (tempat, waktu, suasana) yang diperkenalkan dalam prolog? <span class="required">*</span></label>
+        <textarea id="prolog_latar" name="prolog_latar" placeholder="Latar tempat: ...&#10;Latar waktu: ...&#10;Latar suasana: ..." required></textarea>
+      </div>
+    </div>
+
+    <!-- C: DIALOG (Orientasi + Komplikasi + Resolusi) -->
+    <div class="form-section">
+      <div class="section-top"><span class="section-num">C</span><span class="section-label">Dialog</span><span class="struktur-pill pill-dialog">Bagian Utama</span></div>
+      <p class="section-desc">Bagian utama drama yang terdiri dari tiga sub-bagian: Orientasi, Komplikasi, dan Resolusi.</p>
+
+      <!-- Sub: Orientasi -->
+      <div class="sub-header">
+        <span class="sub-icon">1</span>
+        <span class="sub-title">Orientasi</span>
+        <span class="sub-desc">Pengenalan tokoh, latar, dan situasi awal</span>
+      </div>
+      <div class="question">
+        <label class="q-label" for="ori_tokoh">3. Siapa saja tokoh yang diperkenalkan? Jelaskan karakter masing-masing. <span class="required">*</span>
+          <span class="hint">Sebutkan nama, peran (protagonis/antagonis/dll), dan wataknya.</span>
+        </label>
+        <textarea id="ori_tokoh" name="ori_tokoh" placeholder="• Nama tokoh — peran — watak&#10;• Nama tokoh — peran — watak" required></textarea>
+      </div>
+      <div class="question">
+        <label class="q-label" for="ori_situasi">4. Bagaimana situasi awal yang digambarkan? <span class="required">*</span>
+          <span class="hint">Apa yang sedang terjadi saat drama dimulai?</span>
+        </label>
+        <textarea id="ori_situasi" name="ori_situasi" placeholder="Deskripsikan keadaan awal cerita..." required></textarea>
+      </div>
+      <div class="question">
+        <label class="q-label" for="ori_tema">5. Apa tema utama yang mulai terlihat pada bagian orientasi? <span class="required">*</span></label>
+        <input type="text" id="ori_tema" name="ori_tema" placeholder="Contoh: persahabatan, keadilan, pengorbanan..." required>
+      </div>
+
+      <div class="sub-divider"></div>
+
+      <!-- Sub: Komplikasi -->
+      <div class="sub-header">
+        <span class="sub-icon">2</span>
+        <span class="sub-title">Komplikasi</span>
+        <span class="sub-desc">Munculnya konflik hingga klimaks</span>
+      </div>
+      <div class="question">
+        <label class="q-label" for="komp_konflik">6. Konflik apa yang muncul dalam drama ini? <span class="required">*</span>
+          <span class="hint">Jelaskan pertentangan yang terjadi antartokoh atau dalam diri tokoh.</span>
+        </label>
+        <textarea id="komp_konflik" name="komp_konflik" placeholder="Jelaskan konflik utama yang terjadi..." required></textarea>
+      </div>
+      <div class="question">
+        <label class="q-label">7. Jenis konflik yang paling dominan: <span class="required">*</span></label>
+        <div class="option-group">
+          <label class="option-item"><input type="radio" name="jenis_konflik" value="Manusia vs Manusia" required><span>⚔️ Manusia vs Manusia (antarkarakter)</span></label>
+          <label class="option-item"><input type="radio" name="jenis_konflik" value="Manusia vs Diri Sendiri"><span>🧠 Manusia vs Diri Sendiri (konflik batin)</span></label>
+          <label class="option-item"><input type="radio" name="jenis_konflik" value="Manusia vs Masyarakat"><span>🏘️ Manusia vs Masyarakat / Lingkungan</span></label>
+          <label class="option-item"><input type="radio" name="jenis_konflik" value="Manusia vs Alam"><span>🌿 Manusia vs Alam</span></label>
+        </div>
+      </div>
+      <div class="question">
+        <label class="q-label" for="komp_klimaks">8. Apa peristiwa puncak (klimaks) dalam drama ini? <span class="required">*</span>
+          <span class="hint">Momen di mana ketegangan mencapai titik tertinggi.</span>
+        </label>
+        <textarea id="komp_klimaks" name="komp_klimaks" placeholder="Deskripsikan adegan klimaks..." required></textarea>
+      </div>
+      <div class="question">
+        <label class="q-label" for="komp_penyebab">9. Apa yang menjadi penyebab utama konflik tersebut?</label>
+        <textarea id="komp_penyebab" name="komp_penyebab" placeholder="Latar belakang atau pemicu konflik..."></textarea>
+      </div>
+
+      <div class="sub-divider"></div>
+
+      <!-- Sub: Resolusi -->
+      <div class="sub-header">
+        <span class="sub-icon">3</span>
+        <span class="sub-title">Resolusi</span>
+        <span class="sub-desc">Penyelesaian konflik &amp; akhir cerita</span>
+      </div>
+      <div class="question">
+        <label class="q-label" for="res_penyelesaian">10. Bagaimana konflik diselesaikan? <span class="required">*</span>
+          <span class="hint">Tindakan atau peristiwa apa yang membuat konflik mereda?</span>
+        </label>
+        <textarea id="res_penyelesaian" name="res_penyelesaian" placeholder="Jelaskan proses penyelesaian konflik..." required></textarea>
+      </div>
+      <div class="question">
+        <label class="q-label">11. Bagaimana akhir cerita drama ini? <span class="required">*</span></label>
+        <div class="option-group">
+          <label class="option-item"><input type="radio" name="akhir_cerita" value="Happy Ending" required><span>😊 Happy Ending — berakhir bahagia</span></label>
+          <label class="option-item"><input type="radio" name="akhir_cerita" value="Sad Ending"><span>😢 Sad Ending — berakhir menyedihkan / tragis</span></label>
+          <label class="option-item"><input type="radio" name="akhir_cerita" value="Open Ending"><span>❓ Open Ending — akhir terbuka, tidak tuntas</span></label>
+          <label class="option-item"><input type="radio" name="akhir_cerita" value="Bittersweet"><span>🌗 Bittersweet — campuran bahagia dan sedih</span></label>
+        </div>
+      </div>
+      <div class="question">
+        <label class="q-label" for="res_perubahan">12. Bagaimana perubahan tokoh utama dari awal hingga akhir cerita? <span class="required">*</span></label>
+        <textarea id="res_perubahan" name="res_perubahan" placeholder="Contoh: Dari penakut menjadi berani, dari egois menjadi peduli..." required></textarea>
+      </div>
+    </div>
+
+    <!-- D: EPILOG -->
+    <div class="form-section">
+      <div class="section-top"><span class="section-num">D</span><span class="section-label">Epilog</span><span class="struktur-pill pill-epilog">Bagian Penutup</span></div>
+      <p class="section-desc">Penutup drama — bisa berupa narasi narator, monolog tokoh, atau rangkuman akhir yang menegaskan pesan.</p>
+      <div class="question">
+        <label class="q-label">13. Apakah drama ini memiliki epilog? <span class="required">*</span></label>
+        <div class="option-group">
+          <label class="option-item"><input type="radio" name="ada_epilog" value="Ya" required><span>✅ Ya, ada epilog</span></label>
+          <label class="option-item"><input type="radio" name="ada_epilog" value="Tidak"><span>❌ Tidak ada epilog</span></label>
+        </div>
+      </div>
+      <div class="question">
+        <label class="q-label" for="epilog_isi">14. Jika ada, bagaimana isi epilog tersebut?
+          <span class="hint">Apa yang disampaikan di bagian penutup? Jika tidak ada, tuliskan "Tidak ada".</span>
+        </label>
+        <textarea id="epilog_isi" name="epilog_isi" placeholder="Deskripsikan isi epilog atau tuliskan 'Tidak ada'..."></textarea>
+      </div>
+      <div class="question">
+        <label class="q-label" for="amanat">15. Apa amanat / pesan moral yang disampaikan drama ini? <span class="required">*</span></label>
+        <textarea id="amanat" name="amanat" placeholder="Tuliskan pesan moral atau pelajaran hidup dari drama ini..." required></textarea>
+      </div>
+    </div>
+
+    <!-- G: REFLEKSI -->
+    <div class="form-section">
+      <div class="section-top"><span class="section-num">E</span><span class="section-label">Refleksi &amp; Penilaian</span></div>
+      <p class="section-desc">Pendapatmu secara pribadi tentang drama ini.</p>
+      <div class="question">
+        <label class="q-label">16. Seberapa menarik drama ini menurutmu? <span class="required">*</span></label>
+        <div class="scale-row" id="scaleRow">
+          <button type="button" class="scale-btn" data-val="1">1</button>
+          <button type="button" class="scale-btn" data-val="2">2</button>
+          <button type="button" class="scale-btn" data-val="3">3</button>
+          <button type="button" class="scale-btn" data-val="4">4</button>
+          <button type="button" class="scale-btn" data-val="5">5</button>
+        </div>
+        <input type="hidden" id="rating" name="rating">
+        <div class="scale-labels"><span>😐 Kurang menarik</span><span>😍 Sangat menarik</span></div>
+      </div>
+      <div class="question">
+        <label class="q-label" for="kesan">17. Bagian mana yang paling berkesan dan mengapa? <span class="required">*</span></label>
+        <textarea id="kesan" name="kesan" placeholder="Ceritakan adegan atau dialog yang paling membekas..." required></textarea>
+      </div>
+      <div class="question">
+        <label class="q-label" for="kesulitan">18. Apakah ada bagian struktur yang sulit kamu pahami?</label>
+        <textarea id="kesulitan" name="kesulitan" placeholder="Tuliskan jika ada, atau tuliskan 'Tidak ada'..."></textarea>
+      </div>
+      <div class="question">
+        <label class="q-label" for="komentar">19. Komentar atau pertanyaan untuk guru</label>
+        <textarea id="komentar" name="komentar" placeholder="Tuliskan komentarmu di sini..."></textarea>
+      </div>
+    </div>
+
+    <div class="submit-area">
+      <button type="submit" class="submit-btn" id="submitBtn">✦ Kirim Jawaban ✦</button>
+      <div class="status-msg" id="statusMsg"></div>
+      <p class="submit-note">Pastikan semua pertanyaan wajib (*) telah dijawab sebelum mengirim.</p>
+    </div>
+  </form>
+
+  <div class="form-footer">Lembar Kerja Digital · Analisis Struktur Drama · Bahasa Indonesia</div>
+</div>
+
+<!-- Success Overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="check">🎭</div>
+    <h2>Jawaban Terkirim!</h2>
+    <div class="gold-line"></div>
+    <p>Terima kasih telah mengerjakan analisis drama dengan sungguh-sungguh.<br>Jawabanmu telah berhasil dicatat. Semangat terus belajar!</p>
+    <button class="reset-btn" onclick="resetForm()">← Isi Lagi</button>
+  </div>
+</div>
+
+<script>
+  // ===================================================
+  // KONFIGURASI — GANTI URL INI SETELAH SETUP SELESAI
+  // Ikuti panduan di file PANDUAN-SETUP.md
+  // ===================================================
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQHITAF1jmN7ZYGDSKWUmMNdjCLUKStfmrmybopjBBisYzIAQtOjvCVw8Q0V6z5SAl/exec";
+
+  // Scale rating
+  document.querySelectorAll('.scale-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('rating').value = btn.dataset.val;
+    });
+  });
+
+  function collectData() {
+    const f = document.getElementById('dramaForm');
+    const v = id => (document.getElementById(id)||{}).value||'';
+    const r = name => { const el = f.querySelector(`[name="${name}"]:checked`); return el?el.value:''; };
+    return {
+      timestamp: new Date().toLocaleString('id-ID'),
+      nama: v('nama'), kelas: v('kelas'), judul_drama: v('judul'),
+      prolog_isi: v('prolog_isi'), prolog_latar: v('prolog_latar'),
+      orientasi_tokoh: v('ori_tokoh'), orientasi_situasi: v('ori_situasi'), orientasi_tema: v('ori_tema'),
+      komplikasi_konflik: v('komp_konflik'), komplikasi_jenis_konflik: r('jenis_konflik'),
+      komplikasi_klimaks: v('komp_klimaks'), komplikasi_penyebab: v('komp_penyebab'),
+      resolusi_penyelesaian: v('res_penyelesaian'), resolusi_akhir_cerita: r('akhir_cerita'),
+      resolusi_perubahan_tokoh: v('res_perubahan'),
+      ada_epilog: r('ada_epilog'), epilog_isi: v('epilog_isi'), amanat: v('amanat'),
+      rating_ketertarikan: v('rating'), bagian_berkesan: v('kesan'),
+      bagian_sulit: v('kesulitan'), komentar_guru: v('komentar')
+    };
+  }
+
+  function validate() {
+    let ok = true;
+    const f = document.getElementById('dramaForm');
+    ['nama','judul','prolog_isi','prolog_latar','ori_tokoh','ori_situasi','ori_tema',
+     'komp_konflik','komp_klimaks','res_penyelesaian','res_perubahan','amanat','kesan'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.value.trim()) { el.classList.add('error-field'); ok = false; }
+      else el.classList.remove('error-field');
+    });
+    const kelas = document.getElementById('kelas');
+    if (!kelas.value) { kelas.classList.add('error-field'); ok = false; } else kelas.classList.remove('error-field');
+    ['jenis_konflik','akhir_cerita','ada_epilog'].forEach(n => { if (!f.querySelector(`[name="${n}"]:checked`)) ok = false; });
+    if (!document.getElementById('rating').value) ok = false;
+    return ok;
+  }
+
+  document.getElementById('dramaForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    if (!validate()) {
+      showStatus('error','⚠️ Mohon lengkapi semua pertanyaan wajib (*) sebelum mengirim.');
+      window.scrollTo({top:0,behavior:'smooth'}); return;
+    }
+    if (APPS_SCRIPT_URL === "GANTI_DENGAN_URL_APPS_SCRIPT_KAMU") {
+      showStatus('error','⚠️ Konfigurasi belum selesai. Hubungi guru untuk menyelesaikan setup.'); return;
+    }
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    showStatus('loading','⏳ Mengirim jawaban ke Google Sheets...');
+    try {
+      await fetch(APPS_SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(collectData()) });
+      document.getElementById('successOverlay').classList.add('show');
+      window.scrollTo({top:0,behavior:'smooth'});
+    } catch(err) {
+      btn.disabled = false;
+      showStatus('error','❌ Gagal mengirim. Periksa koneksi internet lalu coba lagi.');
+    }
+  });
+
+  function showStatus(type, msg) {
+    const el = document.getElementById('statusMsg');
+    el.className = `status-msg show status-${type}`;
+    el.textContent = msg;
+  }
+
+  function resetForm() {
+    document.getElementById('dramaForm').reset();
+    document.getElementById('successOverlay').classList.remove('show');
+    document.getElementById('submitBtn').disabled = false;
+    document.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('rating').value = '';
+    document.getElementById('statusMsg').className = 'status-msg';
+  }
+</script>
+</body>
+</html>
